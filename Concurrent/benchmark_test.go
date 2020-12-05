@@ -14,22 +14,22 @@ var value bool
 
 func Benchmark(b *testing.B) {
 	tests := []gol.Params{
-		{ImageWidth: 128, ImageHeight: 128, Threads: 1},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 2},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 3},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 4},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 5},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 6},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 7},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 8},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 9},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 10},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 11},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 12},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 13},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 14},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 15},
-		{ImageWidth: 128, ImageHeight: 128, Threads: 16},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 1},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 2},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 3},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 4},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 5},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 6},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 7},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 8},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 9},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 10},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 11},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 12},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 13},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 14},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 15},
+		{ImageWidth: 16, ImageHeight: 16, Threads: 16},
 	}
 	for _, t := range tests {
 		value = true
