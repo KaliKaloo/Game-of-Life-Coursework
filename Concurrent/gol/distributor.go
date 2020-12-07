@@ -44,7 +44,6 @@ func distributor(p Params, c distributorChannels) {
 	periodicChan := make(chan bool)
 	go ticker(periodicChan)
 
-	rem := mod(p.ImageHeight, p.Threads)
 	splitThreads := p.ImageHeight / p.Threads
 
 	turn := 0
@@ -53,24 +52,16 @@ func distributor(p Params, c distributorChannels) {
 			workerChannels := make([]chan [][]byte, p.Threads)
 			for i := range workerChannels {
 				workerChannels[i] = make(chan [][]byte)
+				if i == p.Threads-1 {
+					rem := mod(p.ImageHeight, p.Threads)
+					go worker(p, i*splitThreads, (i+1)*splitThreads+rem, world, workerChannels[i])
 
-				startY := i*splitThreads + rem
-				endY := (i+1)*splitThreads + rem
-				if i < rem {
-
-					startY = i * (splitThreads + 1)
-					endY = (i + 1) * (splitThreads + 1)
-
+				} else {
+					go worker(p, i*splitThreads, (i+1)*splitThreads, world, workerChannels[i])
 				}
 
-				// if i < rem {
-				// 	startY = i * (splitThreads + 1)
-				// 	endY = (i + 1) * (splitThreads + 1)
-				// }
-
-				go worker(p, startY, endY, world, workerChannels[i])
-
 			}
+
 
 			tempWorld := make([][]byte, 0)
 			for i := range workerChannels { // collects the resulting parts into a single 2D slice
@@ -134,7 +125,9 @@ func distributor(p Params, c distributorChannels) {
 
 func worker(p Params, startY, endY int, world [][]byte, out chan<- [][]uint8) {
 	newData := calculateNextState(p, world, startY, endY)
-	out <- newData
+	subslice := newData[startY:endY]
+
+	out <- subslice
 
 }
 

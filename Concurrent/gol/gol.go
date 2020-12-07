@@ -6,7 +6,7 @@ import "uk.ac.bris.cs/gameoflife/util"
 type Params struct {
 	Turns       int
 	Threads     int
-	ImageWidth  int 
+	ImageWidth  int
 	ImageHeight int
 }
 
@@ -35,7 +35,7 @@ func calculateNeighbours(p Params, x, y int, world [][]byte) int {
 //takes the current state of the world and completes one evolution of the world. It then returns the result.
 func calculateNextState(p Params, world [][]byte, startY, endY int) [][]byte {
 	//makes a new world
-	newWorld := make([][]byte, endY-startY)
+	newWorld := make([][]byte, p.ImageHeight)
 	for i := range newWorld {
 		newWorld[i] = make([]byte, p.ImageWidth)
 	}
@@ -45,21 +45,21 @@ func calculateNextState(p Params, world [][]byte, startY, endY int) [][]byte {
 			neighbours := calculateNeighbours(p, x, y, world)
 			if world[y][x] == alive {
 				if neighbours == 2 || neighbours == 3 {
-					newWorld[y-startY][x] = alive
+					newWorld[y][x] = alive
 				} else {
-					newWorld[y-startY][x] = dead
+					newWorld[y][x] = dead
 				}
 			} else {
 				if neighbours == 3 {
-					newWorld[y-startY][x] = alive
+					newWorld[y][x] = alive
 				} else {
-					newWorld[y-startY][x] = dead
+					newWorld[y][x] = dead
 				}
 			}
 		}
 	}
 	return newWorld
-} 
+}
 
 //takes the world as input and returns the (x, y) coordinates of all the cells that are alive.
 func calculateAliveCells(p Params, world [][]uint8) []util.Cell {
@@ -89,7 +89,7 @@ func Run(p Params, events chan<- Event, keyPresses <-chan rune) {
 		events,
 		ioCommand,
 		ioIdle,
-		filename, 
+		filename,
 		input,
 		output,
 		keyPresses,
