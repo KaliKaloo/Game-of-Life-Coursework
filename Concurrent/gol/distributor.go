@@ -1,3 +1,5 @@
+//SERIAL VERSION!!
+
 package gol
 
 import (
