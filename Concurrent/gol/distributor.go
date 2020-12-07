@@ -51,7 +51,7 @@ func distributor(p Params, c distributorChannels) {
 	turn := 0
 	for turn = 0; turn <= p.Turns; turn++ {
 		if turn > 0 {
-			// workerChannels := make([]chan [][]byte, p.Threads)
+			// /workerChannels := make([]chan [][]byte, p.Threads)
 			// for i := range workerChannels {
 			// 	workerChannels[i] = make(chan [][]byte)
 
