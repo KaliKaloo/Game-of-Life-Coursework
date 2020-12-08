@@ -17,6 +17,21 @@ func mod(x, m int) int {
 	return (x + m) % m
 }
 
+//takes the world as input and returns the (x, y) coordinates of all the cells that are alive.
+func calculateAliveCells(p Params, world [][]uint8) []util.Cell {
+	aliveCells := []util.Cell{}
+
+	for y := 0; y < p.ImageHeight; y++ {
+		for x := 0; x < p.ImageWidth; x++ {
+			if world[y][x] == alive {
+				aliveCells = append(aliveCells, util.Cell{X: x, Y: y})
+			}
+		}
+	}
+
+	return aliveCells
+}
+
 //calculates number of neighbours of cell
 func calculateNeighbours(p Params, x, y int, world [][]byte) int {
 	neighbours := 0
@@ -33,47 +48,36 @@ func calculateNeighbours(p Params, x, y int, world [][]byte) int {
 }
 
 //takes the current state of the world and completes one evolution of the world. It then returns the result.
-func calculateNextState(p Params, world [][]byte, startY, endY int) [][]byte {
-	//makes a new world
-	newWorld := make([][]byte, p.ImageHeight)
+func calculateNextState(p Params, subworld [][]byte, c distributorChannels, startY, endY, turns int) [][]byte {
+
+	newWorld := make([][]byte, endY-startY)
 	for i := range newWorld {
 		newWorld[i] = make([]byte, p.ImageWidth)
 	}
 	//sets cells to dead or alive according to num of neighbours
 	for y := startY; y < endY; y++ {
 		for x := 0; x < p.ImageWidth; x++ {
-			neighbours := calculateNeighbours(p, x, y, world)
-			if world[y][x] == alive {
+			neighbours := calculateNeighbours(p, x, y, subworld)
+			if subworld[y][x] == alive {
 				if neighbours == 2 || neighbours == 3 {
-					newWorld[y][x] = alive
+					newWorld[y-startY][x] = alive
 				} else {
-					newWorld[y][x] = dead
+					newWorld[y-startY][x] = dead
+					c.events <- CellFlipped{CompletedTurns: turns, Cell: util.Cell{X: x, Y: y}}
+
 				}
 			} else {
 				if neighbours == 3 {
-					newWorld[y][x] = alive
+					newWorld[y-startY][x] = alive
+					c.events <- CellFlipped{CompletedTurns: turns, Cell: util.Cell{X: x, Y: y}}
+
 				} else {
-					newWorld[y][x] = dead
+					newWorld[y-startY][x] = dead
 				}
 			}
 		}
 	}
 	return newWorld
-}
-
-//takes the world as input and returns the (x, y) coordinates of all the cells that are alive.
-func calculateAliveCells(p Params, world [][]uint8) []util.Cell {
-	aliveCells := []util.Cell{}
-
-	for y := 0; y < p.ImageHeight; y++ {
-		for x := 0; x < p.ImageWidth; x++ {
-			if world[y][x] == alive {
-				aliveCells = append(aliveCells, util.Cell{X: x, Y: y})
-			}
-		}
-	}
-
-	return aliveCells
 }
 
 // Run starts the processing of Game of Life. It should initialise channels and goroutines.

@@ -56,10 +56,10 @@ func distributor(p Params, c distributorChannels) {
 				workerChannels[i] = make(chan [][]byte)
 				if i == p.Threads-1 {
 					rem := mod(p.ImageHeight, p.Threads)
-					go worker(p, i*splitThreads, (i+1)*splitThreads+rem, world, workerChannels[i])
+					go worker(p, i*splitThreads, (i+1)*splitThreads+rem, turn, world, c,workerChannels[i])
 
 				} else {
-					go worker(p, i*splitThreads, (i+1)*splitThreads, world, workerChannels[i])
+					go worker(p, i*splitThreads, (i+1)*splitThreads, turn, world,c, workerChannels[i])
 				}
 
 			}
@@ -124,11 +124,9 @@ func distributor(p Params, c distributorChannels) {
 	close(c.events)
 }
 
-func worker(p Params, startY, endY int, world [][]byte, out chan<- [][]uint8) {
-	newData := calculateNextState(p, world, startY, endY)
-	subslice := newData[startY:endY]
-
-	out <- subslice
+func worker(p Params, startY, endY, turn int, world [][]byte, c distributorChannels, out chan<- [][]byte) {
+	newData := calculateNextState(p, world, c, startY, endY, turn)
+	out <- newData
 
 }
 
