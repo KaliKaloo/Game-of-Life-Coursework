@@ -45,22 +45,53 @@ func distributor(p Params, c distributorChannels) {
 
 	periodicChan := make(chan bool)
 	go ticker(periodicChan)
-
+	rem := mod(p.ImageHeight, p.Threads)
 	splitThreads := p.ImageHeight / p.Threads
-
 	turn := 0
 	for turn = 0; turn <= p.Turns; turn++ {
 		if turn > 0 {
 			workerChannels := make([]chan [][]byte, p.Threads)
 			for i := range workerChannels {
 				workerChannels[i] = make(chan [][]byte)
-				if i == p.Threads-1 {
-					rem := mod(p.ImageHeight, p.Threads)
-					go worker(p, i*splitThreads, (i+1)*splitThreads+rem, turn, world, c,workerChannels[i])
 
-				} else {
-					go worker(p, i*splitThreads, (i+1)*splitThreads, turn, world,c, workerChannels[i])
+				startY := i*splitThreads + rem
+				endY := (i+1)*splitThreads + rem
+				if i < rem {
+
+					startY = i * (splitThreads + 1)
+					endY = (i + 1) * (splitThreads + 1)
+
 				}
+				size := endY - startY + 2
+
+				subworld := make([][]byte, size)
+				for k := range subworld {
+					subworld[k] = make([]byte, p.ImageWidth)
+				}
+				if i != 0 && i != p.Threads-1 { // not equal to first or last worker
+					go worker(p, startY, endY, turn, world[startY-1:endY+1], c, workerChannels[i])
+					continue
+
+				} else if i == 0 { //first worker
+					subworld[0] = world[p.ImageHeight-1]
+					if p.Threads == 1 {
+						subworld[size-1] = world[0]
+						size--
+
+					}
+					for j := 1; j < size; j++ {
+						subworld[j] = world[j-1]
+
+					}
+				} else { //last worker
+
+					for j := 0; j < size-1; j++ {
+						subworld[j] = world[startY+j-1]
+					}
+					subworld[size-1] = world[0]
+				}
+
+				go worker(p, startY, endY, turn, subworld, c, workerChannels[i])
 
 			}
 

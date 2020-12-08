@@ -55,24 +55,24 @@ func calculateNextState(p Params, subworld [][]byte, c distributorChannels, star
 		newWorld[i] = make([]byte, p.ImageWidth)
 	}
 	//sets cells to dead or alive according to num of neighbours
-	for y := startY; y < endY; y++ {
+	for y := 0; y < endY-startY; y++ {
 		for x := 0; x < p.ImageWidth; x++ {
-			neighbours := calculateNeighbours(p, x, y, subworld)
-			if subworld[y][x] == alive {
+			neighbours := calculateNeighbours(p, x, y+1, subworld)
+			if subworld[y+1][x] == alive {
 				if neighbours == 2 || neighbours == 3 {
-					newWorld[y-startY][x] = alive
+					newWorld[y][x] = alive
 				} else {
-					newWorld[y-startY][x] = dead
+					newWorld[y][x] = dead
 					c.events <- CellFlipped{CompletedTurns: turns, Cell: util.Cell{X: x, Y: y}}
 
 				}
 			} else {
 				if neighbours == 3 {
-					newWorld[y-startY][x] = alive
+					newWorld[y][x] = alive
 					c.events <- CellFlipped{CompletedTurns: turns, Cell: util.Cell{X: x, Y: y}}
 
 				} else {
-					newWorld[y-startY][x] = dead
+					newWorld[y][x] = dead
 				}
 			}
 		}
