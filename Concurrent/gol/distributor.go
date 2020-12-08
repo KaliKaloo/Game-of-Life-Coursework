@@ -3,6 +3,7 @@
 package gol
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -42,8 +43,8 @@ func distributor(p Params, c distributorChannels) {
 		}
 	}
 
-	// periodicChan := make(chan bool)
-	// go ticker(periodicChan)
+	periodicChan := make(chan bool)
+	go ticker(periodicChan)
 
 	splitThreads := p.ImageHeight / p.Threads
 
@@ -62,7 +63,6 @@ func distributor(p Params, c distributorChannels) {
 				}
 
 			}
-
 
 			tempWorld := make([][]byte, 0)
 			for i := range workerChannels { // collects the resulting parts into a single 2D slice
@@ -102,43 +102,6 @@ func distributor(p Params, c distributorChannels) {
 
 		}
 
-		// tempWorld := make([][]byte, 0)
-		// for i := range workerChannels { // collects the resulting parts into a single 2D slice
-		// 	workerResults := <-workerChannels[i]
-		// 	tempWorld = append(tempWorld, workerResults...)
-		// }
-		// world = tempWorld
-
-		// select {
-		// case key := <-c.keyPresses:
-		// 	if key == 's' {
-		// 		printBoard(p, c, world, turn)
-
-		// 	} else if key == 'q' {
-		// 		printBoard(p, c, world, turn)
-		// 		c.events <- StateChange{CompletedTurns: turn, NewState: Quitting}
-		// 		close(c.events)
-		// 		return
-
-		// 	} else if key == 'p' {
-		// 		fmt.Println(turn)
-		// 		c.events <- StateChange{CompletedTurns: turn, NewState: Paused}
-		// 		for {
-		// 			tempKey := <-c.keyPresses
-		// 			if tempKey == 'p' {
-		// 				fmt.Println("Continuing")
-		// 				c.events <- StateChange{CompletedTurns: turn, NewState: Executing}
-		// 				break
-		// 			}
-		// 		}
-		// 	}
-
-		// case <-periodicChan:
-		// 	c.events <- AliveCellsCount{CompletedTurns: turn, CellsCount: len(calculateAliveCells(p, world))}
-		// default:
-		// }
-		// }
-
 		c.events <- TurnComplete{CompletedTurns: turn}
 
 		for y := 0; y < p.ImageHeight; y++ {
@@ -161,19 +124,13 @@ func distributor(p Params, c distributorChannels) {
 	close(c.events)
 }
 
-<<<<<<< HEAD
 func worker(p Params, startY, endY int, world [][]byte, out chan<- [][]uint8) {
 	newData := calculateNextState(p, world, startY, endY)
 	subslice := newData[startY:endY]
 
 	out <- subslice
-=======
-// func worker(p Params, startY, endY int, world [][]byte, out chan<- [][]uint8) {
-// 	newData := calculateNextState(p, world, startY, endY)
-// 	out <- newData
->>>>>>> a1a78632c8f65d8636aa39fc9c12306ec0f3cb4e
 
-// }
+}
 
 func ticker(aliveChan chan bool) {
 	for {
