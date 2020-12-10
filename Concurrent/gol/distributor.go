@@ -1,4 +1,4 @@
-//SERIAL VERSION!!
+//SUBWORLD VERSION!!
 
 package gol
 
