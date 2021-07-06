@@ -9,7 +9,9 @@ The British mathematician John Horton Conway devised a cellular automaton named 
 - Consider the image to be on a closed domain (pixels on the top row are connected to pixels at the bottom row, pixels on the right are connected to pixels on the left and vice versa). A user can only interact with the Game of Life by creating an initial configuration and observing how it evolves. Note that evolving such complex, deterministic systems is an important application of scientific computing, often making use of parallel architectures and concurrent programs running on large computing farms.
 
 Our task was to design and implement programs which simulate the Game of Life on an image matrix.
+
 -----------------------------------------------------------------------
+
 ### There are 3 parts to this coursework:
 - **Parallel Implementation:**  write code to evolve Game of Life using multiple worker goroutines on a single machine. 
 - **Distributed Implementatio:** create an implementation that uses a number of AWS nodes to cooperatively calculate the new state of the Game of Life board, and communicate state between machines over a network. 
